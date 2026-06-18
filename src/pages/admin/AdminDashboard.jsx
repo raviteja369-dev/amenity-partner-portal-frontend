@@ -34,7 +34,7 @@ export default function AdminDashboard() {
 
   useEffect(() => { load(); }, [filterByActiveBrand, brandKey, locked]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const k = data?.kpis || {};
+  const k = useMemo(() => data?.kpis ?? {}, [data]);
   const activePartners = useMemo(() => data?.by_partner?.filter((p) => p.leads > 0).length ?? 0, [data]);
   const conversionRate = k.total_leads ? Math.round((k.total_clients / k.total_leads) * 100) : 0;
 
