@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -18,7 +18,7 @@ const features = [
 ];
 
 export default function AdminLogin() {
-  const { login, logout, user, bootstrapping } = useAuth();
+  const { login, logout, bootstrapping } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,10 +26,16 @@ export default function AdminLogin() {
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (bootstrapping) return;
-    if (user?.role === "admin") navigate("/admin", { replace: true });
-  }, [bootstrapping, user, navigate]);
+  if (bootstrapping) {
+    return (
+      <div className="min-h-screen bg-[#0B1120] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-8 w-8 rounded-full border-2 border-indigo-400 border-t-transparent animate-spin" />
+          <p className="text-sm text-slate-400">Loading admin sign in…</p>
+        </div>
+      </div>
+    );
+  }
 
   const validate = () => {
     const e = {};
@@ -99,7 +105,7 @@ export default function AdminLogin() {
         </div>
 
         <p className="relative text-xs text-slate-600 hidden lg:block">
-          Amenity Forge Partner Portal ┬╖ Admin
+          Amenity Forge Partner Portal · Admin
         </p>
       </div>
 
@@ -169,7 +175,7 @@ export default function AdminLogin() {
               {busy ? (
                 <>
                   <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                  VerifyingΓÇª
+                  Verifying…
                 </>
               ) : (
                 <>Access admin dashboard <ArrowRight size={16} /></>

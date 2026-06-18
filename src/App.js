@@ -26,28 +26,28 @@ function App() {
             <Toaster position="top-right" richColors closeButton />
             <Routes>
               <Route path="/" element={<Landing />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/partner/login" element={<Login portal="partner" />} />
               <Route path="/login" element={<Login />} />
 
-              <Route
-                path="/admin"
-                element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}
-              >
-                <Route index element={<AdminDashboard />} />
-                <Route path="partners" element={<AdminPartners />} />
-                <Route path="leads" element={<AdminLeads mode="leads" />} />
-                <Route path="clients" element={<AdminLeads mode="clients" />} />
-                <Route path="payments" element={<AdminLeads mode="payments" />} />
+              {/* Admin: login is public; dashboard routes are protected */}
+              <Route path="/admin">
+                <Route path="login" element={<AdminLogin />} />
+                <Route element={<ProtectedRoute role="admin"><AdminLayout /></ProtectedRoute>}>
+                  <Route index element={<AdminDashboard />} />
+                  <Route path="partners" element={<AdminPartners />} />
+                  <Route path="leads" element={<AdminLeads mode="leads" />} />
+                  <Route path="clients" element={<AdminLeads mode="clients" />} />
+                  <Route path="payments" element={<AdminLeads mode="payments" />} />
+                </Route>
               </Route>
 
-              <Route
-                path="/partner"
-                element={<ProtectedRoute role="partner"><PartnerLayout /></ProtectedRoute>}
-              >
-                <Route index element={<PartnerDashboard />} />
-                <Route path="leads" element={<PartnerLeads filter="all" />} />
-                <Route path="clients" element={<PartnerLeads filter="clients" />} />
+              {/* Partner: login is public; dashboard routes are protected */}
+              <Route path="/partner">
+                <Route path="login" element={<Login portal="partner" />} />
+                <Route element={<ProtectedRoute role="partner"><PartnerLayout /></ProtectedRoute>}>
+                  <Route index element={<PartnerDashboard />} />
+                  <Route path="leads" element={<PartnerLeads filter="all" />} />
+                  <Route path="clients" element={<PartnerLeads filter="clients" />} />
+                </Route>
               </Route>
 
               <Route path="*" element={<Navigate to="/" replace />} />
