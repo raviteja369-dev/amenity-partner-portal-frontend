@@ -62,13 +62,6 @@ export default function Landing() {
     { label: "Pending", value: statsLoading ? "…" : inrCompact(k.pending_revenue) },
   ]), [k, statsLoading]);
 
-  const bottomStats = useMemo(() => ([
-    { value: statsLoading ? "…" : String(k.total_partners), label: "Active Partners" },
-    { value: statsLoading ? "…" : inrCompact(k.total_revenue), label: "Revenue Tracked" },
-    { value: statsLoading ? "…" : `${k.conversion_rate}%`, label: "Conversion Rate" },
-    { value: statsLoading ? "…" : String(k.total_leads), label: "Total Leads" },
-  ]), [k, statsLoading]);
-
   const chartBars = useMemo(() => {
     const points = stats.monthly?.length
       ? stats.monthly.map((m) => m.leads)
@@ -173,20 +166,6 @@ export default function Landing() {
               </div>
             </FadeIn>
           </div>
-        </div>
-      </section>
-
-      {/* Stats */}
-      <section className="border-y border-border/60 bg-card">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-          <StaggerContainer key={brand.key} className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {bottomStats.map((s) => (
-              <StaggerItem key={s.label} className="text-center">
-                <p className="text-3xl lg:text-4xl font-bold text-primary font-mono-tabular">{s.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
         </div>
       </section>
 
