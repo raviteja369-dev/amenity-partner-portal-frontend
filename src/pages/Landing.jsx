@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ArrowRight, Building2, Wallet, BarChart3, CheckCircle2, Star,
-  Shield, Zap, Users, TrendingUp, ChevronRight,
+  Shield, Zap, Users, TrendingUp, ChevronRight, BookOpen, Megaphone,
+  Target, LineChart, Cpu, Workflow, Wrench, Layers,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
 import BrandSwitcher from "@/components/BrandSwitcher";
@@ -17,14 +18,41 @@ const STATS = [
   { value: "3", label: "Brand Verticals" },
 ];
 
-const FEATURES = [
-  { icon: BarChart3, title: "Real-time Analytics", body: "Track leads, conversions, and revenue with live dashboards and interactive charts." },
-  { icon: Building2, title: "Lead Management", body: "Capture school details, target classes, and deal values in under 60 seconds." },
-  { icon: CheckCircle2, title: "Client Conversion", body: "Convert leads to clients with one click and track the full pipeline." },
-  { icon: Wallet, title: "Payment Ledger", body: "Mark payments paid or unpaid and monitor earnings in INR automatically." },
-  { icon: Shield, title: "Enterprise Security", body: "Role-based access, secure authentication, and encrypted data storage." },
-  { icon: Zap, title: "Lightning Fast", body: "Built for speed with instant updates and a responsive mobile-first design." },
-];
+const BRAND_CAPABILITIES = {
+  eduosa: {
+    subtitle: "Built for Edu Tech partners — manage school pipelines, product demos, and revenue in one place.",
+    items: [
+      { icon: BarChart3, title: "Real-time Analytics", body: "Track school leads, conversions, and Edu Tech revenue with live dashboards and interactive charts." },
+      { icon: Building2, title: "School Lead Management", body: "Capture school details, target classes, and deal values in under 60 seconds." },
+      { icon: BookOpen, title: "Product Catalog", body: "Present Edu Tech offerings to schools and map the right solutions to each institution." },
+      { icon: CheckCircle2, title: "Client Conversion", body: "Convert school leads to active clients with one click and track the full pipeline." },
+      { icon: Wallet, title: "Payment Ledger", body: "Mark payments paid or unpaid and monitor Edu Tech earnings in INR automatically." },
+      { icon: Shield, title: "Enterprise Security", body: "Role-based access, secure authentication, and encrypted data storage." },
+    ],
+  },
+  "c-forgia": {
+    subtitle: "Built for CRM and digital marketing partners — run campaigns, nurture leads, and close B2B deals faster.",
+    items: [
+      { icon: Target, title: "CRM Pipeline", body: "Manage consultative B2B school partnerships from first contact to signed contract." },
+      { icon: Megaphone, title: "Campaign Tracking", body: "Monitor digital marketing campaigns, outreach performance, and lead source attribution." },
+      { icon: LineChart, title: "Conversion Analytics", body: "Measure funnel performance with live dashboards for leads, clients, and marketing ROI." },
+      { icon: Users, title: "Lead Nurturing", body: "Capture prospect details, follow-up stages, and deal values across your sales pipeline." },
+      { icon: Wallet, title: "Payment Ledger", body: "Track commissions and client payments in INR with a clear paid vs pending view." },
+      { icon: Zap, title: "Lightning Fast", body: "Built for field teams with instant updates and a responsive mobile-first design." },
+    ],
+  },
+  facilo: {
+    subtitle: "Built for custom product engineering partners — scope projects, track delivery, and manage automation deals.",
+    items: [
+      { icon: Wrench, title: "Project Pipeline", body: "Track custom engineering engagements from discovery through delivery and handoff." },
+      { icon: Cpu, title: "Automation Tracking", body: "Monitor automation deployments, milestones, and technical rollout status in one view." },
+      { icon: Layers, title: "Requirements Capture", body: "Document product specs, scope, and deal values for every engineering opportunity." },
+      { icon: Workflow, title: "Delivery Workflow", body: "Convert qualified leads to active clients and follow progress through each stage." },
+      { icon: Wallet, title: "Payment Ledger", body: "Mark milestone payments paid or unpaid and monitor engineering revenue in INR." },
+      { icon: Shield, title: "Enterprise Security", body: "Role-based access, secure authentication, and encrypted project data." },
+    ],
+  },
+};
 
 const TESTIMONIALS = [
   { quote: "This portal transformed how we manage our school partnerships. Everything is in one place.", name: "Aarav Mehta", role: "Eduosa Partner, Mumbai" },
@@ -35,6 +63,7 @@ const TESTIMONIALS = [
 export default function Landing() {
   const { brand, brands, parent, locked, setBrand } = useBrand();
   const visibleBrands = locked ? [brand] : Object.values(brands);
+  const capabilities = BRAND_CAPABILITIES[brand.key] || BRAND_CAPABILITIES.eduosa;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -155,11 +184,13 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <FadeIn className="text-center max-w-2xl mx-auto mb-16">
             <p className="text-sm font-medium text-primary uppercase tracking-wide mb-3">Capabilities</p>
-            <h2 className="text-3xl lg:text-4xl font-bold tracking-tight">Everything you need to grow</h2>
-            <p className="mt-4 text-muted-foreground">Built for partners in the field — manage your entire pipeline from one powerful platform.</p>
+            <h2 className="text-3xl lg:text-4xl font-bold tracking-tight">
+              Everything you need for {brand.name}
+            </h2>
+            <p className="mt-4 text-muted-foreground">{capabilities.subtitle}</p>
           </FadeIn>
-          <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {FEATURES.map((f) => (
+          <StaggerContainer key={brand.key} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {capabilities.items.map((f) => (
               <StaggerItem key={f.title}>
                 <div className="enterprise-card-hover p-6 h-full">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-4">
