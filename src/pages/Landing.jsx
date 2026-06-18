@@ -1,22 +1,16 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  ArrowRight, Building2, Wallet, BarChart3, CheckCircle2, Star,
+  ArrowRight, Building2, Wallet, BarChart3, CheckCircle2,
   Shield, Zap, Users, TrendingUp, ChevronRight, BookOpen, Megaphone,
   Target, LineChart, Cpu, Workflow, Wrench, Layers,
 } from "lucide-react";
 import BrandMark from "@/components/BrandMark";
-import BrandSwitcher from "@/components/BrandSwitcher";
 import { useBrand } from "@/context/BrandContext";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/enterprise";
-
-const STATS = [
-  { value: "500+", label: "Partner Schools" },
-  { value: "₹2Cr+", label: "Revenue Tracked" },
-  { value: "98%", label: "Partner Satisfaction" },
-  { value: "3", label: "Brand Verticals" },
-];
+import useLandingStats from "@/hooks/useLandingStats";
+import { inrCompact } from "@/lib/api";
 
 const BRAND_CAPABILITIES = {
   eduosa: {
@@ -54,16 +48,34 @@ const BRAND_CAPABILITIES = {
   },
 };
 
-const TESTIMONIALS = [
-  { quote: "This portal transformed how we manage our school partnerships. Everything is in one place.", name: "Aarav Mehta", role: "Eduosa Partner, Mumbai" },
-  { quote: "The conversion tracking alone saved us hours every week. Highly recommended for field teams.", name: "Priya Sharma", role: "C-Forgia Partner, Bengaluru" },
-  { quote: "Clean, fast, and professional. Our partners love the dashboard experience.", name: "Rahul Iyer", role: "Facilo Partner, Pune" },
-];
-
 export default function Landing() {
   const { brand, brands, parent, locked, setBrand } = useBrand();
   const visibleBrands = locked ? [brand] : Object.values(brands);
   const capabilities = BRAND_CAPABILITIES[brand.key] || BRAND_CAPABILITIES.eduosa;
+  const { data: stats, loading: statsLoading } = useLandingStats(brand.key);
+  const k = stats.kpis;
+
+  const heroMetrics = useMemo(() => ([
+    { label: "Leads", value: statsLoading ? "…" : String(k.total_leads) },
+    { label: "Clients", value: statsLoading ? "…" : String(k.total_clients) },
+    { label: "Revenue", value: statsLoading ? "…" : inrCompact(k.total_revenue) },
+    { label: "Pending", value: statsLoading ? "…" : inrCompact(k.pending_revenue) },
+  ]), [k, statsLoading]);
+
+  const bottomStats = useMemo(() => ([
+    { value: statsLoading ? "…" : String(k.total_partners), label: "Active Partners" },
+    { value: statsLoading ? "…" : inrCompact(k.total_revenue), label: "Revenue Tracked" },
+    { value: statsLoading ? "…" : `${k.conversion_rate}%`, label: "Conversion Rate" },
+    { value: statsLoading ? "…" : String(k.total_leads), label: "Total Leads" },
+  ]), [k, statsLoading]);
+
+  const chartBars = useMemo(() => {
+    const points = stats.monthly?.length
+      ? stats.monthly.map((m) => m.leads)
+      : [0, 0, 0, 0, 0, 0, 0];
+    const max = Math.max(...points, 1);
+    return points.map((n) => Math.round((n / max) * 100));
+  }, [stats.monthly]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -73,7 +85,6 @@ export default function Landing() {
           <nav className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#why" className="hover:text-foreground transition-colors">Why Us</a>
-            <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
           </nav>
           <Link to="/login" data-testid="nav-login-link" className="btn-primary h-9 text-sm">
             Sign in <ArrowRight size={14} />
@@ -137,20 +148,20 @@ export default function Landing() {
                       <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      {["Leads", "Clients", "Revenue", "Pending"].map((l, i) => (
-                        <div key={l} className="rounded-xl bg-white/80 backdrop-blur p-4 shadow-sm">
-                          <p className="text-[10px] text-muted-foreground uppercase">{l}</p>
-                          <p className="text-xl font-bold mt-1">{["24", "8", "₹4.2L", "₹1.1L"][i]}</p>
+                      {heroMetrics.map((m) => (
+                        <div key={m.label} className="rounded-xl bg-white/80 backdrop-blur p-4 shadow-sm">
+                          <p className="text-[10px] text-muted-foreground uppercase">{m.label}</p>
+                          <p className="text-xl font-bold mt-1 font-mono-tabular">{m.value}</p>
                         </div>
                       ))}
                     </div>
                     <div className="rounded-xl bg-white/80 backdrop-blur p-4 shadow-sm">
                       <div className="flex items-end gap-1 h-16">
-                        {[40, 65, 45, 80, 55, 90, 70].map((h, i) => (
+                        {chartBars.map((h, i) => (
                           <motion.div
-                            key={i}
+                            key={`${brand.key}-${i}`}
                             initial={{ height: 0 }}
-                            animate={{ height: `${h}%` }}
+                            animate={{ height: `${Math.max(h, 8)}%` }}
                             transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
                             className="flex-1 rounded-sm bg-primary/80"
                           />
@@ -168,10 +179,10 @@ export default function Landing() {
       {/* Stats */}
       <section className="border-y border-border/60 bg-card">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-          <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {STATS.map((s) => (
+          <StaggerContainer key={brand.key} className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {bottomStats.map((s) => (
               <StaggerItem key={s.label} className="text-center">
-                <p className="text-3xl lg:text-4xl font-bold text-primary">{s.value}</p>
+                <p className="text-3xl lg:text-4xl font-bold text-primary font-mono-tabular">{s.value}</p>
                 <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
               </StaggerItem>
             ))}
@@ -245,32 +256,6 @@ export default function Landing() {
               </div>
             </div>
           </FadeIn>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section id="testimonials" className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <FadeIn className="text-center mb-12">
-            <p className="text-sm font-medium text-primary uppercase tracking-wide mb-3">Testimonials</p>
-            <h2 className="text-3xl font-bold tracking-tight">Trusted by partners nationwide</h2>
-          </FadeIn>
-          <StaggerContainer className="grid md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t) => (
-              <StaggerItem key={t.name}>
-                <div className="enterprise-card p-6 h-full flex flex-col">
-                  <div className="flex gap-0.5 mb-4">
-                    {Array.from({ length: 5 }).map((_, i) => <Star key={i} size={14} className="fill-warning text-warning" />)}
-                  </div>
-                  <p className="text-sm text-foreground leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <p className="text-sm font-semibold">{t.name}</p>
-                    <p className="text-xs text-muted-foreground">{t.role}</p>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
         </div>
       </section>
 

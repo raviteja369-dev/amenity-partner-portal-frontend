@@ -50,3 +50,11 @@ export function inr(n) {
   const v = Number(n || 0);
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(v);
 }
+
+export function inrCompact(n) {
+  const v = Number(n || 0);
+  if (v >= 10000000) return `₹${(v / 10000000).toFixed(1).replace(/\.0$/, "")}Cr`;
+  if (v >= 100000) return `₹${(v / 100000).toFixed(1).replace(/\.0$/, "")}L`;
+  if (v >= 1000) return `₹${(v / 1000).toFixed(1).replace(/\.0$/, "")}K`;
+  return inr(v);
+}
