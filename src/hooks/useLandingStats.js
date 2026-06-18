@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import api from "@/lib/api";
+import axios from "axios";
+import { API } from "@/lib/api";
 
 const POLL_MS = 30000;
 
@@ -15,6 +16,9 @@ const EMPTY = {
   monthly: [],
 };
 
+// Public stats — no auth header so stale tokens cannot break the landing page.
+const publicApi = axios.create({ baseURL: API });
+
 export default function useLandingStats(brandKey) {
   const [data, setData] = useState(EMPTY);
   const [loading, setLoading] = useState(true);
@@ -23,12 +27,11 @@ export default function useLandingStats(brandKey) {
   const load = useCallback(async () => {
     if (!brandKey) return;
     try {
-      const { data: res } = await api.get("/stats/landing", { params: { brand: brandKey } });
+      const { data: res } = await publicApi.get("/stats/landing", { params: { brand: brandKey } });
       setData(res);
       setError(null);
     } catch (err) {
       setError(err);
-      setData(EMPTY);
     } finally {
       setLoading(false);
     }
@@ -36,10 +39,12 @@ export default function useLandingStats(brandKey) {
 
   useEffect(() => {
     setLoading(true);
+    setData(EMPTY);
+    setError(null);
     load();
     const id = setInterval(load, POLL_MS);
     return () => clearInterval(id);
   }, [load]);
 
   return { data, loading, error, refresh: load };
-}
+};
