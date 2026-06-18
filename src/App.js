@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
+import AdminLogin from "@/pages/admin/AdminLogin";
 import AdminLayout from "@/pages/admin/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminPartners from "@/pages/admin/AdminPartners";
@@ -25,7 +26,7 @@ function App() {
             <Toaster position="top-right" richColors closeButton />
             <Routes>
               <Route path="/" element={<Landing />} />
-              <Route path="/admin/login" element={<Login portal="admin" />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
               <Route path="/partner/login" element={<Login portal="partner" />} />
               <Route path="/login" element={<Login />} />
 
