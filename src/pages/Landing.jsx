@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -9,8 +9,21 @@ import {
 import BrandMark from "@/components/BrandMark";
 import { useBrand } from "@/context/BrandContext";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/enterprise";
-import useLandingStats from "@/hooks/useLandingStats";
-import { inrCompact } from "@/lib/api";
+
+const BRAND_DEMO = {
+  eduosa: {
+    metrics: ["24", "8", "₹4.2L", "₹1.1L"],
+    chart: [40, 65, 45, 80, 55, 90, 70],
+  },
+  "c-forgia": {
+    metrics: ["18", "6", "₹3.1L", "₹0.9L"],
+    chart: [55, 40, 70, 60, 85, 50, 75],
+  },
+  facilo: {
+    metrics: ["15", "5", "₹2.8L", "₹0.7L"],
+    chart: [35, 50, 65, 45, 70, 80, 55],
+  },
+};
 
 const BRAND_CAPABILITIES = {
   eduosa: {
@@ -52,23 +65,8 @@ export default function Landing() {
   const { brand, brands, parent, locked, setBrand } = useBrand();
   const visibleBrands = locked ? [brand] : Object.values(brands);
   const capabilities = BRAND_CAPABILITIES[brand.key] || BRAND_CAPABILITIES.eduosa;
-  const { data: stats, loading: statsLoading } = useLandingStats(brand.key);
-  const k = stats.kpis;
-
-  const heroMetrics = useMemo(() => ([
-    { label: "Leads", value: statsLoading ? "…" : String(k.total_leads) },
-    { label: "Clients", value: statsLoading ? "…" : String(k.total_clients) },
-    { label: "Revenue", value: statsLoading ? "…" : inrCompact(k.total_revenue) },
-    { label: "Pending", value: statsLoading ? "…" : inrCompact(k.pending_revenue) },
-  ]), [k, statsLoading]);
-
-  const chartBars = useMemo(() => {
-    const points = stats.monthly?.length
-      ? stats.monthly.map((m) => m.leads)
-      : [0, 0, 0, 0, 0, 0, 0];
-    const max = Math.max(...points, 1);
-    return points.map((n) => Math.round((n / max) * 100));
-  }, [stats.monthly]);
+  const demo = BRAND_DEMO[brand.key] || BRAND_DEMO.eduosa;
+  const heroLabels = ["Leads", "Clients", "Revenue", "Pending"];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -141,20 +139,20 @@ export default function Landing() {
                       <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      {heroMetrics.map((m) => (
-                        <div key={m.label} className="rounded-xl bg-white/80 backdrop-blur p-4 shadow-sm">
-                          <p className="text-[10px] text-muted-foreground uppercase">{m.label}</p>
-                          <p className="text-xl font-bold mt-1 font-mono-tabular">{m.value}</p>
+                      {heroLabels.map((label, i) => (
+                        <div key={label} className="rounded-xl bg-white/80 backdrop-blur p-4 shadow-sm">
+                          <p className="text-[10px] text-muted-foreground uppercase">{label}</p>
+                          <p className="text-xl font-bold mt-1 font-mono-tabular">{demo.metrics[i]}</p>
                         </div>
                       ))}
                     </div>
                     <div className="rounded-xl bg-white/80 backdrop-blur p-4 shadow-sm">
                       <div className="flex items-end gap-1 h-16">
-                        {chartBars.map((h, i) => (
+                        {demo.chart.map((h, i) => (
                           <motion.div
                             key={`${brand.key}-${i}`}
                             initial={{ height: 0 }}
-                            animate={{ height: `${Math.max(h, 8)}%` }}
+                            animate={{ height: `${h}%` }}
                             transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
                             className="flex-1 rounded-sm bg-primary/80"
                           />
