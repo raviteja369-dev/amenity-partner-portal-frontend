@@ -21,7 +21,7 @@ export const BRANDS = {
     key: "facilo",
     name: "Facilo",
     label: "Facilo Partner Portal",
-    tagline: "Facility services for India's modern campuses.",
+    tagline: "Partner For Custom Product Engineering and Automation",
     accentHex: "#00C853",
     short: "FCL",
   },
