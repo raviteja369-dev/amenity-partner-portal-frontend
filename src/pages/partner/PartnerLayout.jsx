@@ -25,7 +25,7 @@ export default function PartnerLayout() {
   const handleLogout = async () => {
     await logout();
     toast.success("Signed out");
-    nav("/login", { replace: true });
+    nav("/partner/login", { replace: true });
   };
 
   return (

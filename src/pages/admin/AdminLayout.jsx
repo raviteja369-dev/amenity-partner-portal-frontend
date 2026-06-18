@@ -24,7 +24,7 @@ export default function AdminLayout() {
   const handleLogout = async () => {
     await logout();
     toast.success("Signed out");
-    nav("/login", { replace: true });
+    nav("/admin/login", { replace: true });
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -12,8 +12,8 @@ import { useBrand } from "@/context/BrandContext";
 import { formatApiError } from "@/lib/api";
 import { FadeIn } from "@/components/enterprise";
 
-export default function Login() {
-  const { login } = useAuth();
+export default function Login({ portal }) {
+  const { login, logout, user, bootstrapping } = useAuth();
   const { locked } = useBrand();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -22,6 +22,19 @@ export default function Login() {
   const [showPw, setShowPw] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const copy = portal === "admin"
+    ? { title: "Admin sign in", subtitle: "Enter your admin credentials to access the dashboard" }
+    : portal === "partner"
+      ? { title: "Partner sign in", subtitle: "Enter your partner credentials to access the portal" }
+      : { title: "Sign in", subtitle: "Enter your credentials to access the portal" };
+
+  useEffect(() => {
+    if (bootstrapping || !user) return;
+    if (portal === "admin" && user.role === "admin") navigate("/admin", { replace: true });
+    else if (portal === "partner" && user.role === "partner") navigate("/partner", { replace: true });
+    else if (!portal) navigate(user.role === "admin" ? "/admin" : "/partner", { replace: true });
+  }, [bootstrapping, user, portal, navigate]);
 
   const validate = () => {
     const e = {};
@@ -39,6 +52,16 @@ export default function Login() {
     setBusy(true);
     try {
       const u = await login(email.trim().toLowerCase(), password);
+      if (portal === "admin" && u.role !== "admin") {
+        await logout();
+        toast.error("This account is not an admin account.");
+        return;
+      }
+      if (portal === "partner" && u.role !== "partner") {
+        await logout();
+        toast.error("This account is not a partner account.");
+        return;
+      }
       if (remember) localStorage.setItem("pp_remember", email.trim().toLowerCase());
       toast.success(`Welcome back, ${u.name}`);
       navigate(u.role === "admin" ? "/admin" : "/partner", { replace: true });
@@ -112,8 +135,8 @@ export default function Login() {
           <FadeIn className="w-full max-w-md">
             <div className="enterprise-card p-8 shadow-elevated">
               <div className="mb-8">
-                <h2 className="text-2xl font-bold tracking-tight">Sign in</h2>
-                <p className="mt-1.5 text-sm text-muted-foreground">Enter your credentials to access the portal</p>
+                <h2 className="text-2xl font-bold tracking-tight">{copy.title}</h2>
+                <p className="mt-1.5 text-sm text-muted-foreground">{copy.subtitle}</p>
               </div>
 
               <form onSubmit={submit} data-testid="login-form" autoComplete="off" className="space-y-5">

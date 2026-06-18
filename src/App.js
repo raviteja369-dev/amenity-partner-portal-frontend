@@ -25,6 +25,8 @@ function App() {
             <Toaster position="top-right" richColors closeButton />
             <Routes>
               <Route path="/" element={<Landing />} />
+              <Route path="/admin/login" element={<Login portal="admin" />} />
+              <Route path="/partner/login" element={<Login portal="partner" />} />
               <Route path="/login" element={<Login />} />
 
               <Route
