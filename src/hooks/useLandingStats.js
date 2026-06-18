@@ -16,8 +16,14 @@ const EMPTY = {
   monthly: [],
 };
 
-// Public stats — no auth header so stale tokens cannot break the landing page.
-const publicApi = axios.create({ baseURL: API });
+function statsApiBase() {
+  if (typeof window === "undefined") return API;
+  // Deployed site: same-origin /api → Vercel serverless (reads MongoDB directly)
+  if (!/^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname)) return "/api";
+  return API;
+}
+
+const publicApi = axios.create();
 
 export default function useLandingStats(brandKey) {
   const [data, setData] = useState(EMPTY);
@@ -27,6 +33,7 @@ export default function useLandingStats(brandKey) {
   const load = useCallback(async () => {
     if (!brandKey) return;
     try {
+      publicApi.defaults.baseURL = statsApiBase();
       const { data: res } = await publicApi.get("/stats/landing", { params: { brand: brandKey } });
       setData(res);
       setError(null);
@@ -47,4 +54,4 @@ export default function useLandingStats(brandKey) {
   }, [load]);
 
   return { data, loading, error, refresh: load };
-};
+}
