@@ -1,13 +1,16 @@
 import axios from "axios";
 
+const PRODUCTION_BACKEND =
+  "https://amenity-partner-portal-backend-production.up.railway.app";
+
 function resolveApiBase() {
   // Local dev: same-origin /api (webpack proxy → localhost:5000)
   if (typeof window !== "undefined" && /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname)) {
     return "/api";
   }
   if (process.env.NODE_ENV === "development") return "/api";
-  const url = (process.env.REACT_APP_BACKEND_URL || "").replace(/\/$/, "");
-  return url ? `${url}/api` : "/api";
+  const url = (process.env.REACT_APP_BACKEND_URL || PRODUCTION_BACKEND).replace(/\/$/, "");
+  return `${url}/api`;
 }
 
 export const API = resolveApiBase();
