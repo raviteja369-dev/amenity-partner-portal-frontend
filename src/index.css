@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 217 91% 53%;
+  --radius: 0.5rem;
+
+  --primary: 217 91% 53%;
+  --primary-foreground: 0 0% 100%;
+  --primary-hover: 217 91% 45%;
+  --brand-tint: 217 91% 97%;
+
+  --success: 142 71% 45%;
+  --warning: 38 92% 50%;
+  --danger: 0 84% 60%;
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+}
+
+html[data-brand="eduosa"] {
+  --primary: 258 90% 76%;
+  --primary-hover: 258 85% 68%;
+  --primary-foreground: 262 47% 22%;
+  --brand-tint: 258 100% 97%;
+  --ring: 258 90% 76%;
+}
+html[data-brand="c-forgia"] {
+  --primary: 217 91% 53%;
+  --primary-hover: 217 91% 45%;
+  --brand-tint: 217 91% 97%;
+  --ring: 217 91% 53%;
+}
+html[data-brand="facilo"] {
+  --primary: 142 71% 45%;
+  --primary-hover: 142 71% 38%;
+  --brand-tint: 142 60% 97%;
+  --ring: 142 71% 45%;
+}
+
+* { border-color: hsl(var(--border)); }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display { font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.025em; }
+.font-mono-tabular { font-variant-numeric: tabular-nums; }
+
+::selection { background: hsl(var(--primary) / 0.15); color: hsl(var(--foreground)); }
+
+@layer components {
+  .glass-header {
+    @apply bg-white/80 backdrop-blur-xl border-b border-border/60 shadow-sm;
+  }
+
+  .enterprise-card {
+    @apply bg-card rounded-xl border border-border/80 shadow-sm transition-all duration-200;
+  }
+
+  .enterprise-card-hover {
+    @apply enterprise-card hover:shadow-md hover:border-border hover:-translate-y-0.5;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground px-4 h-10 text-sm font-medium shadow-sm hover:bg-[hsl(var(--primary-hover))] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-card px-4 h-10 text-sm font-medium text-foreground shadow-sm hover:bg-muted transition-all duration-200;
+  }
+
+  .input-enterprise {
+    @apply flex h-10 w-full rounded-lg border border-input bg-card px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  .gradient-hero {
+    background: radial-gradient(ellipse 80% 60% at 50% -20%, hsl(var(--primary) / 0.12), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 0%, hsl(var(--primary) / 0.06), transparent);
+  }
+
+  .gradient-mesh {
+    background:
+      radial-gradient(at 40% 20%, hsl(var(--primary) / 0.08) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, hsl(217 91% 53% / 0.06) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, hsl(142 71% 45% / 0.04) 0px, transparent 50%);
+  }
+}
+
+.bg-grid {
+  background-image: linear-gradient(to right, hsl(var(--border)) 1px, transparent 1px),
+                    linear-gradient(to bottom, hsl(var(--border)) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.brand-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 9999px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--brand-tint));
+  font-size: 12px; font-weight: 500; color: hsl(var(--foreground));
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--secondary)) 50%, hsl(var(--muted)) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
