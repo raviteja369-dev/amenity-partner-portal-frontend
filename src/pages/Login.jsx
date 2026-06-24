@@ -107,11 +107,10 @@ export default function Login({ portal }) {
             </div>
           )}
 
-          <div className="mt-12 grid grid-cols-3 gap-4">
+          <div className="mt-12 grid grid-cols-2 gap-4">
             {[
               { n: "500+", l: "Organizations" },
               { n: "98%", l: "Uptime" },
-              { n: "₹2Cr+", l: "Tracked" },
             ].map((s) => (
               <div key={s.l} className="rounded-xl bg-white/10 backdrop-blur p-4">
                 <p className="text-2xl font-bold">{s.n}</p>
