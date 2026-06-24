@@ -97,7 +97,7 @@ export default function Login({ portal }) {
               Manage your pipeline with confidence
             </h1>
             <p className="mt-4 text-primary-foreground/80 text-base max-w-md leading-relaxed">
-              Track school leads, convert clients, and monitor revenue — all from one enterprise-grade dashboard.
+              Track organization leads, convert clients, and monitor revenue — all from one enterprise-grade dashboard.
             </p>
           </motion.div>
 
@@ -109,7 +109,7 @@ export default function Login({ portal }) {
 
           <div className="mt-12 grid grid-cols-3 gap-4">
             {[
-              { n: "500+", l: "Schools" },
+              { n: "500+", l: "Organizations" },
               { n: "98%", l: "Uptime" },
               { n: "₹2Cr+", l: "Tracked" },
             ].map((s) => (
